@@ -8,5 +8,3 @@ type Response[T interface{}] struct {
 
 type Nullstruct struct {
 }
-
-type Emptyarray []Nullstruct
