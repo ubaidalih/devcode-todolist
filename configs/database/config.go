@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -21,15 +21,9 @@ func (database *Database) lazyInit() {
 		username := os.Getenv("MYSQL_USER")
 		password := os.Getenv("MYSQL_PASSWORD")
 		dbname := os.Getenv("MYSQL_DBNAME")
+		dsn := username + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?charset=utf8mb4&parseTime=True&loc=Local"
 
-		dsn := "host=" + host
-		dsn += " user=" + username
-		dsn += " password=" + password
-		dsn += " dbname=" + dbname
-		dsn += " port=" + port
-		dsn += " sslmode=disable"
-
-		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{SkipDefaultTransaction: true})
+		db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 		if err != nil {
 			panic("Cannot connect database")
 		}
