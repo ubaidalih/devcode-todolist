@@ -81,6 +81,8 @@ func (con *activityController) CreateActivity(c echo.Context) error {
 	}
 
 	if request.Title == "" {
+		response := entities.Response[[]string]{}
+		response.Data = make([]string, 0)
 		response.Status = types.ERROR_BAD_REQUEST
 		response.Message = "title cannot be null"
 		return c.JSON(http.StatusBadRequest, response)
@@ -124,6 +126,8 @@ func (con *activityController) UpdateActivity(c echo.Context) error {
 	}
 
 	if request.Title == "" {
+		response := entities.Response[[]string]{}
+		response.Data = make([]string, 0)
 		response.Status = types.ERROR_BAD_REQUEST
 		response.Message = "title cannot be null"
 		return c.JSON(http.StatusBadRequest, response)
@@ -164,7 +168,7 @@ func (con *activityController) UpdateActivity(c echo.Context) error {
 
 func (con *activityController) DeleteActivity(c echo.Context) error {
 	db := con.db
-	response := entities.Response[[]string]{}
+	response := entities.Response[entities.Nullstruct]{}
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	activity := entities.Activity{}
@@ -187,7 +191,7 @@ func (con *activityController) DeleteActivity(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	response.Data = make([]string, 0)
+	response.Data = entities.Nullstruct{}
 	response.Status = types.SUCCESS
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)

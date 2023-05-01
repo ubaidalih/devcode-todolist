@@ -88,22 +88,26 @@ func (con *todoController) CreateTodo(c echo.Context) error {
 	request := requests.CreateTodoRequest{}
 
 	if err := c.Bind(&request); err != nil {
+		response := entities.Response[[]string]{}
+		response.Data = make([]string, 0)
 		response.Status = types.FAILED
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	if request.Title == "" {
+		response := entities.Response[[]string]{}
+		response.Data = make([]string, 0)
 		response.Status = types.ERROR_BAD_REQUEST
 		response.Message = "title cannot be null"
-		response.Data = responses.GetTodoResponse{}
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	if request.ActivityGroupID == 0 {
+		response := entities.Response[[]string]{}
+		response.Data = make([]string, 0)
 		response.Status = types.ERROR_BAD_REQUEST
 		response.Message = "activity_group_id cannot be null"
-		response.Data = responses.GetTodoResponse{}
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -163,6 +167,8 @@ func (con *todoController) UpdateTodo(c echo.Context) error {
 	}
 
 	if todo == (entities.Todo{}) {
+		response := entities.Response[[]string]{}
+		response.Data = make([]string, 0)
 		response.Status = types.NOT_FOUND
 		response.Message = "Todo with ID " + c.Param("id") + " Not Found"
 		return c.JSON(http.StatusNotFound, response)
@@ -190,7 +196,7 @@ func (con *todoController) UpdateTodo(c echo.Context) error {
 
 func (con *todoController) DeleteTodo(c echo.Context) error {
 	db := con.db
-	response := entities.Response[[]string]{}
+	response := entities.Response[entities.Nullstruct]{}
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	todo := entities.Todo{}
@@ -213,7 +219,7 @@ func (con *todoController) DeleteTodo(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	response.Data = make([]string, 0)
+	response.Data = entities.Nullstruct{}
 	response.Status = types.SUCCESS
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
