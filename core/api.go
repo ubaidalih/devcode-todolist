@@ -3,7 +3,6 @@ package core
 import (
 	"devcode-todolist/configs/middlewares"
 	"devcode-todolist/routes"
-	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -21,6 +20,6 @@ func Run() {
 	routes.ActivityRoute(e)
 	routes.TodoRoute(e)
 
-	port := os.Getenv("PORT")
+	port := "3030"
 	e.Logger.Fatal(e.Start(":" + port))
 }
