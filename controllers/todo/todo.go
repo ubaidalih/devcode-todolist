@@ -13,7 +13,7 @@ import (
 
 func (con *todoController) GetAllTodo(c echo.Context) error {
 	db := con.db
-	response := entities.Response[[]responses.GetTodoResponse]{}
+	response := entities.Response[interface{}]{}
 
 	todos := []entities.Todo{}
 	if activity_group_id, err := strconv.Atoi(c.QueryParam("activity_group_id")); err == nil {
@@ -31,8 +31,17 @@ func (con *todoController) GetAllTodo(c echo.Context) error {
 		}
 	}
 
+	if todos == nil {
+		//response := entities.Response[[]entities.Nullstruct]{}
+		response.Status = types.SUCCESS
+		response.Message = types.SUCCESS
+		response.Data = make([]string, 0)
+		return c.JSON(http.StatusOK, response)
+	}
+
+	data := []responses.GetTodoResponse{}
 	for _, todo := range todos {
-		response.Data = append(response.Data, responses.GetTodoResponse{
+		data = append(data, responses.GetTodoResponse{
 			ID:               todo.TodoID,
 			ActitvityGroupID: todo.ActivityGroupID,
 			Title:            todo.Title,
@@ -43,6 +52,7 @@ func (con *todoController) GetAllTodo(c echo.Context) error {
 		})
 	}
 
+	response.Data = data
 	response.Status = types.SUCCESS
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
@@ -118,9 +128,9 @@ func (con *todoController) CreateTodo(c echo.Context) error {
 		Priority:        request.Priority,
 	}
 
-	// if !request.IsActive {
-	// 	todo.IsActive = true
-	// }
+	if !request.IsActive {
+		todo.IsActive = true
+	}
 
 	if request.Priority == "" {
 		todo.Priority = "very-high"
