@@ -62,7 +62,7 @@ func (con *todoController) GetOneTodo(c echo.Context) error {
 	}
 
 	if todo == (entities.Todo{}) {
-		response.Status = types.FAILED
+		response.Status = types.NOT_FOUND
 		response.Message = "Todo with ID " + c.Param("id") + " Not Found"
 		return c.JSON(http.StatusNotFound, response)
 	}
@@ -139,7 +139,7 @@ func (con *todoController) CreateTodo(c echo.Context) error {
 	}
 	response.Status = types.SUCCESS
 	response.Message = types.SUCCESS
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusCreated, response)
 }
 
 func (con *todoController) UpdateTodo(c echo.Context) error {
@@ -163,7 +163,7 @@ func (con *todoController) UpdateTodo(c echo.Context) error {
 	}
 
 	if todo == (entities.Todo{}) {
-		response.Status = types.FAILED
+		response.Status = types.NOT_FOUND
 		response.Message = "Todo with ID " + c.Param("id") + " Not Found"
 		return c.JSON(http.StatusNotFound, response)
 	}
@@ -190,7 +190,7 @@ func (con *todoController) UpdateTodo(c echo.Context) error {
 
 func (con *todoController) DeleteTodo(c echo.Context) error {
 	db := con.db
-	response := entities.Response[responses.GetTodoResponse]{}
+	response := entities.Response[[]string]{}
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	todo := entities.Todo{}
@@ -202,7 +202,7 @@ func (con *todoController) DeleteTodo(c echo.Context) error {
 	}
 
 	if todo == (entities.Todo{}) {
-		response.Status = types.FAILED
+		response.Status = types.NOT_FOUND
 		response.Message = "Todo with ID " + c.Param("id") + " Not Found"
 		return c.JSON(http.StatusNotFound, response)
 	}
@@ -213,6 +213,7 @@ func (con *todoController) DeleteTodo(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	response.Data = make([]string, 0)
 	response.Status = types.SUCCESS
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)

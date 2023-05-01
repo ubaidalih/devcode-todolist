@@ -51,7 +51,7 @@ func (con *activityController) GetOneActivity(c echo.Context) error {
 	}
 
 	if activity == (entities.Activity{}) {
-		response.Status = types.FAILED
+		response.Status = types.NOT_FOUND
 		response.Message = "Activity with ID " + c.Param("id") + " Not Found"
 		return c.JSON(http.StatusNotFound, response)
 	}
@@ -138,7 +138,7 @@ func (con *activityController) UpdateActivity(c echo.Context) error {
 	}
 
 	if activity == (entities.Activity{}) {
-		response.Status = types.FAILED
+		response.Status = types.NOT_FOUND
 		response.Message = "Activity with ID " + c.Param("id") + " Not Found"
 		return c.JSON(http.StatusNotFound, response)
 	}
@@ -164,7 +164,7 @@ func (con *activityController) UpdateActivity(c echo.Context) error {
 
 func (con *activityController) DeleteActivity(c echo.Context) error {
 	db := con.db
-	response := entities.Response[responses.GetActivityResponse]{}
+	response := entities.Response[[]string]{}
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	activity := entities.Activity{}
@@ -176,7 +176,7 @@ func (con *activityController) DeleteActivity(c echo.Context) error {
 	}
 
 	if activity == (entities.Activity{}) {
-		response.Status = types.FAILED
+		response.Status = types.NOT_FOUND
 		response.Message = "Activity with ID " + c.Param("id") + " Not Found"
 		return c.JSON(http.StatusNotFound, response)
 	}
@@ -187,6 +187,7 @@ func (con *activityController) DeleteActivity(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	response.Data = make([]string, 0)
 	response.Status = types.SUCCESS
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
